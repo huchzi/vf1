@@ -135,9 +135,6 @@ Now, we can plot sensitivities. Note that the blind spot is outside the field fo
 
 vfM <- octopus_list$get_sensitivities(3)
 
-# I'm not sure why this step is necessary? Otherwise, validity check fails.
-vfM$date <- as.Date(vfM$date) 
-
 vfplot(vfM[1, ], type = "s")
 
 ```
