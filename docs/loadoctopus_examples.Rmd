@@ -32,7 +32,7 @@ Therefore, I have decided to implement the loadoctopus function as a function th
 
 library(visualFields)
 
-octopus_list <- loadoctopus("EyesuiteTestfile.csv")
+octopus_list <- loadoctopus("EyesuiteTestfile.csv", version = "7")
 
 str(octopus_list)
 
@@ -94,9 +94,9 @@ Since the csv file also contains age-related normal values for each subject and 
 
 ```{r defects}
 
-# M pattern (M = macula): vfID = 3
+# M pattern (M = macula): vfID = 2
 
-def <- octopus_list$get_defects(3)
+def <- octopus_list$get_defects(2)
 
 print(def)
 
@@ -108,9 +108,9 @@ For many functions of the visualFields package, explicit information on location
 
 ```{r Extracting locmaps}
 
-# M pattern (M = macula): vfID = 3
+# M pattern (M = macula): vfID = 2
 
-m_locmap <- octopus_list$create_locmap(3)
+m_locmap <- octopus_list$create_locmap(2)
 
 print(m_locmap)
 
@@ -133,7 +133,7 @@ Now, we can plot sensitivities. Note that the blind spot is outside the field fo
 
 ```{r Plotting sensitivities}
 
-vfM <- octopus_list$get_sensitivities(3)
+vfM <- octopus_list$get_sensitivities(2)
 
 vfplot(vfM[1, ], type = "s")
 
