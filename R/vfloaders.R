@@ -244,6 +244,7 @@ loadhfadicom <- function(file, type = "pwg", repeated = mean) {
 #' subject-eye) or `\code{pwg}` (for patient with glaucoma) or other
 #' @param repeated function to apply if there are repeated values in a particular location
 #' @param dateFormat format to be used for date. Its default value is \%d.\%m.\%Y
+#' @param version version of the EyeSuite software (currently "7" and "8" supported)
 #' 
 #' @return A list with data frames and functions to extract tables.
 #' 
@@ -275,33 +276,28 @@ loadoctopus <- function(file, type = "pwg", repeated = mean, dateFormat = "%d.%m
   # rename some columns for better readibility of code
   if (version == "7")
   {
-    startCol <- 44
-    names(dat)[1:6] <- c("id", "lastname", "firstname","dateofbirth","sex","ethnicity")
-    names(dat)[11:12] <- c("apparatus", "serial_number")
-    names(dat)[18:24] <- c("eye","pattern","stimulus_size","stimulus_duration","stiumulus_luminance","strategy","tperimetry")
-    names(dat)[26:31] <- c("testduration","testdate","test_starting_time","reliability_factor","locnum","questions")
-    names(dat)[32:36] <- c("repetitions","positive_catch_trials","false_positives","negative_catch_trials","false_negatives")
-    names(dat)[37:41] <- c("notes","sphere","cylinder","axis","bcva")
+    col_offset <- 0
   } 
   else if (version == "8")
   {
-    startCol <- 45
-    names(dat)[1:6] <- c("id", "lastname", "firstname", 
-                         "dateofbirth", "sex", "ethnicity")
-    names(dat)[11:12] <- c("apparatus", "serial_number")
-    names(dat)[18:24] <- c("eye", "pattern", "stimulus_size", 
-                           "stimulus_duration", "stimulus_luminance", 
-                           "tperimetry", "strategy")
-    names(dat)[27:32] <- c("testduration", "testdate", 
-                           "test_starting_time", "reliability_factor", 
-                           "locnum", "questions")
-    names(dat)[33:37] <- c("repetitions", "positive_catch_trials", 
-                           "false_positives", "negative_catch_trials", 
-                           "false_negatives")
-    names(dat)[38:42] <- c("notes", "sphere", "cylinder", 
-                           "axis", "bcva")
+    col_offset <- 1
   } else
   stop(paste("Version", version, "not supported."))
+  
+  names(dat)[1:6] <- c("id", "lastname", "firstname", 
+                       "dateofbirth", "sex", "ethnicity")
+  names(dat)[11:12] <- c("apparatus", "serial_number")
+  names(dat)[18:24] <- c("eye", "pattern", "stimulus_size", 
+                         "stimulus_duration", "stimulus_luminance", 
+                         "tperimetry", "strategy")
+  names(dat)[26:31 + col_offset] <- c("testduration", "testdate", 
+                                  "test_starting_time", "reliability_factor", 
+                                  "locnum", "questions")
+  names(dat)[32:36 + col_offset] <- c("repetitions", "positive_catch_trials", 
+                                  "false_positives", "negative_catch_trials", 
+                                  "false_negatives")
+  names(dat)[37:41 + col_offset] <- c("notes", "sphere", "cylinder", 
+                                  "axis", "bcva")
   
   # recode some variables to factors
   dat$eye <- as.character(factor(dat$eye,
@@ -352,6 +348,7 @@ loadoctopus <- function(file, type = "pwg", repeated = mean, dateFormat = "%d.%m
     locnum <- as.integer(tLine[which(names(tLine) == "locnum")])
     
     # extract locations
+    startCol <- 44 + col_offset
     endCol <- startCol + (locnum* 5) - 1
     locs <- as.numeric(unlist(tLine[startCol:endCol])) / 10
     
